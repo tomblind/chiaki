@@ -224,7 +224,7 @@ CHIAKI_EXPORT void chiaki_pi_decoder_set_params(ChiakiPiDecoder *decoder, int x,
 	configDisplay.nPortIndex = 90;
 	configDisplay.set        = (OMX_DISPLAYSETTYPE)(OMX_DISPLAY_SET_NOASPECT | OMX_DISPLAY_SET_MODE | OMX_DISPLAY_SET_FULLSCREEN | OMX_DISPLAY_SET_PIXEL | OMX_DISPLAY_SET_DEST_RECT | OMX_DISPLAY_SET_ALPHA);
 	configDisplay.mode = OMX_DISPLAY_MODE_LETTERBOX;
-	configDisplay.fullscreen = OMX_FALSE;
+	configDisplay.fullscreen = OMX_TRUE;
 	configDisplay.noaspect   = OMX_FALSE;
 	configDisplay.dest_rect.x_offset  = x;
 	configDisplay.dest_rect.y_offset  = y;

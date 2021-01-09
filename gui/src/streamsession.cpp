@@ -12,6 +12,8 @@
 #include <cstring>
 #include <chiaki/session.h>
 
+static const int SHUTDOWN_BUTTON_COMBO = CHIAKI_CONTROLLER_BUTTON_L1 | CHIAKI_CONTROLLER_BUTTON_R1 | CHIAKI_CONTROLLER_BUTTON_OPTIONS | CHIAKI_CONTROLLER_BUTTON_SHARE;
+
 #define SETSU_UPDATE_INTERVAL_MS 4
 
 StreamSessionConnectInfo::StreamSessionConnectInfo(Settings *settings, ChiakiTarget target, QString host, QByteArray regist_key, QByteArray morning, bool fullscreen)
@@ -343,6 +345,11 @@ void StreamSession::SendFeedbackState()
 
 	chiaki_controller_state_or(&state, &state, &keyboard_state);
 	chiaki_session_set_controller_state(&session, &state);
+
+	if ((state.buttons & SHUTDOWN_BUTTON_COMBO) == SHUTDOWN_BUTTON_COMBO)
+	{
+		Stop();
+	}
 }
 
 void StreamSession::InitAudio(unsigned int channels, unsigned int rate)

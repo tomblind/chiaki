@@ -70,6 +70,9 @@ static QSet<QString> chiaki_motion_controller_guids({
 
 static ControllerManager *instance = nullptr;
 
+static const int PS_BUTTON_COMBO = CHIAKI_CONTROLLER_BUTTON_L3 | CHIAKI_CONTROLLER_BUTTON_R3;
+static const char CONTROLLER_MAPPING[] = "03000000c01600008204000011010000,Teensyduino Keyboard/Mouse/Joystick,a:b0,b:b1,x:b2,y:b3,start:b7,back:b6,leftstick:b8,rightstick:b9,leftshoulder:b4,rightshoulder:b5,dpup:h0.1,dpleft:h0.8,dpdown:h0.4,dpright:h0.2,leftx:a0,lefty:a1,rightx:a2~,righty:a3,lefttrigger:b10,righttrigger:b11,platform:Linux";
+
 #define UPDATE_INTERVAL_MS 4
 
 ControllerManager *ControllerManager::GetInstance()
@@ -88,6 +91,11 @@ ControllerManager::ControllerManager(QObject *parent)
 	{
 		const char *err = SDL_GetError();
 		QMessageBox::critical(nullptr, "SDL Init", tr("Failed to initialized SDL Gamecontroller: %1").arg(err ? err : ""));
+	}
+	if(SDL_GameControllerAddMapping(CONTROLLER_MAPPING) < 0)
+	{
+		const char *err = SDL_GetError();
+		printf("Failed to set SDL controller mapping: %s", err);
 	}
 
 	auto timer = new QTimer(this);
@@ -291,6 +299,10 @@ ChiakiControllerState Controller::GetState()
 	state.right_x = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_RIGHTX);
 	state.right_y = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_RIGHTY);
 
+	if((state.buttons & PS_BUTTON_COMBO) == PS_BUTTON_COMBO)
+	{
+		state.buttons = state.buttons & (~PS_BUTTON_COMBO) | CHIAKI_CONTROLLER_BUTTON_PS;
+	}
 #endif
 	return state;
 }
