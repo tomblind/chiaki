@@ -98,7 +98,7 @@ CHIAKI_EXPORT ChiakiErrorCode chiaki_pi_decoder_init(ChiakiPiDecoder *decoder, C
 	rotationType.nSize = sizeof(OMX_CONFIG_ROTATIONTYPE);
 	rotationType.nVersion.nVersion = OMX_VERSION;
 	rotationType.nPortIndex = 90;
-	//rotationType.nRotation = 90; // example
+	rotationType.nRotation = 90; // example
 
 	if(OMX_SetParameter(ILC_GET_HANDLE(decoder->video_render), OMX_IndexConfigCommonRotate, &rotationType) != OMX_ErrorNone)
 	{
