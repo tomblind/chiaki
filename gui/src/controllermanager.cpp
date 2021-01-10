@@ -73,6 +73,8 @@ static ControllerManager *instance = nullptr;
 static const int PS_BUTTON_COMBO = CHIAKI_CONTROLLER_BUTTON_L3 | CHIAKI_CONTROLLER_BUTTON_R3;
 static const char CONTROLLER_MAPPING[] = "03000000c01600008204000011010000,Teensyduino Keyboard/Mouse/Joystick,a:b0,b:b1,x:b2,y:b3,start:b7,back:b6,leftstick:b8,rightstick:b9,leftshoulder:b4,rightshoulder:b5,dpup:h0.1,dpleft:h0.8,dpdown:h0.4,dpright:h0.2,leftx:a0,lefty:a1,rightx:a2~,righty:a3,lefttrigger:b10,righttrigger:b11,platform:Linux";
 
+#define OFFSET_AXIS(val, off) (int)((std::max(std::min(((val + 32768.0f) / 65535.0f) * 1024.0f, 1024.0f - (float)off), (float)off) - (float)off) / (1024.0f - (float)off * 2.0f) * 65535.0f - 32768.0f)
+
 #define UPDATE_INTERVAL_MS 4
 
 ControllerManager *ControllerManager::GetInstance()
@@ -140,6 +142,7 @@ void ControllerManager::UpdateAvailableControllers()
 		}
 
 		current_controllers.insert(SDL_JoystickGetDeviceInstanceID(i));
+		break;
 	}
 
 	if(current_controllers != available_controllers)
@@ -298,6 +301,11 @@ ChiakiControllerState Controller::GetState()
 	state.left_y = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_LEFTY);
 	state.right_x = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_RIGHTX);
 	state.right_y = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_RIGHTY);
+
+	state.left_x = OFFSET_AXIS(state.left_x, 205);
+	state.left_y = OFFSET_AXIS(state.left_y, 205);
+	state.right_x = OFFSET_AXIS(state.right_x, 265);
+	state.right_y = OFFSET_AXIS(state.right_y, 265);
 
 	if((state.buttons & PS_BUTTON_COMBO) == PS_BUTTON_COMBO)
 	{
